@@ -660,16 +660,19 @@ function doUpdateUser(type)
     if (signupAvatar == 13)
     {
       document.getElementById("chaos").style.display = "block";
+      document.getElementById("bird").style.display = "block";
+      document.getElementById("bird4").style.display = "block";
+      document.getElementById("palmtree").style.display = "block";
       let audio = document.createElement("audio");
       audio.setAttribute("autoplay", true);
       audio.setAttribute("src", "images/quack.mp3");
-      document.getElementById("chaos").appendChild(audio);
+      document.querySelector("body").appendChild(audio);
       
       setTimeout(() => {
         let bird = document.createElement("img");
         bird.setAttribute("id", "bird2");
         bird.setAttribute("src", "images/bird.gif");
-        document.getElementById("chaos").appendChild(bird);
+        document.querySelector("body").appendChild(bird);
       }, 1000);
 
       setTimeout(() => {
@@ -677,7 +680,7 @@ function doUpdateUser(type)
         let explosion1 = document.createElement("img");
         explosion1.setAttribute("id", "explosion1");
         explosion1.setAttribute("src", "images/explosion.gif");
-        document.getElementById("chaos").appendChild(explosion1);
+        document.querySelector("body").appendChild(explosion1);
       }, 3700)
       setTimeout(() => {
         document.getElementById("explosion1").style.display = "none";
