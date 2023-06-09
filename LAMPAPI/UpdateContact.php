@@ -75,8 +75,8 @@ if ((!empty($userId) || !empty($firstName) || !empty($lastName) || !empty($email
     $result = $conn->query($sql);   //run the query
 
     if ($conn->query($sql) === TRUE) {
-        $final = array('contactUpdated' => 'true', 'updated FirstName' => $firstName, 'updated LastName' => $lastName, 'updated Email' => $email,
-            'updated Phone' => $phone, 'updated UserID' => $userId, 'target ID' => $id);
+        $final = array('contactUpdated' => 'true', 'updatedFirstName' => $firstName, 'updatedLastName' => $lastName, 'updatedEmail' => $email,
+            'updatedPhone' => $phone, 'updatedUserID' => $userId, 'ID' => $id);
 
         echo json_encode($final);
         

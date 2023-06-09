@@ -216,8 +216,6 @@ function addContact() {
     // Validate form
     if (!validateInput(firstName, lastName, phoneNumber))
     {
-
-      document.getElementById("contactAddResult").innerHTML = "Invalid input.";
       return;
     }
 
@@ -304,9 +302,9 @@ function searchContact() {
 
 function cancelDelete(id) 
 {
-  let buttons = document.getElementById("buttons");
+  let buttons = document.getElementById(`buttons-${id}`);
 
-  document.getElementById('buttons').removeChild(document.getElementById(`cancel${id}`));
+  document.getElementById(`buttons-${id}`).removeChild(document.getElementById(`cancel${id}`));
 
   let deleteButton = document.getElementById(`delete${id}`);
     deleteButton.innerText = "Delete";
@@ -339,7 +337,7 @@ function confirmDelete(id)
   confirmButton.innerText = "Confirm";
   confirmButton.setAttribute("onclick", `deleteContact(${id});`)
 
-  document.getElementById("buttons").appendChild(cancelButton);
+  document.getElementById(`buttons-${id}`).appendChild(cancelButton);
 }
 
 // Takes in a parsed JSON object from API response
@@ -357,18 +355,22 @@ function updateContactList(jsonObject, action)
     contactDetails.setAttribute("class" , "contactDetails");
 
     let buttons = document.createElement('div');
-    buttons.setAttribute("id", 'buttons');
+    buttons.setAttribute("id", `buttons-${jsonObject[i]["ID"]}`);
     buttons.setAttribute("class" , "buttons");
 
-    let contactDetails4 = document.createElement('p');
     let contactDetails1 = document.createElement('p');
     let contactDetails2 = document.createElement('p');
     let contactDetails3 = document.createElement('p');
+    let contactDetails4 = document.createElement('p');
 
     contactDetails1.innerHTML = jsonObject[i]["FirstName"];
+    contactDetails1.setAttribute("id", `FirstName-${jsonObject[i]["ID"]}`);
     contactDetails2.innerHTML = jsonObject[i]["LastName"];
+    contactDetails2.setAttribute("id", `LastName-${jsonObject[i]["ID"]}`);
     contactDetails3.innerHTML = jsonObject[i]["Email"];
+    contactDetails3.setAttribute("id", `Email-${jsonObject[i]["ID"]}`);
     contactDetails4.innerHTML = jsonObject[i]["Phone"];
+    contactDetails4.setAttribute("id", `Phone-${jsonObject[i]["ID"]}`);
 
     let deleteButton = document.createElement('button');
     deleteButton.setAttribute("id", `delete${jsonObject[i]["ID"]}`);
@@ -460,10 +462,10 @@ function openUpdateUI(firstName, lastName, email, phone, id)
 
 function updateContact()
 {
-    let firstName = document.getElementById("updateFirstName").value;
-    let lastName = document.getElementById("updateLastName").value;
-    let email = document.getElementById("updateEmail").value;
-    let phoneNumber = document.getElementById("updatePhoneNumber").value;
+    let firstName = document.getElementById("editFirstName").value;
+    let lastName = document.getElementById("editLastName").value;
+    let email = document.getElementById("editEmail").value;
+    let phoneNumber = document.getElementById("editPhoneNumber").value;
 
     // Validate form
     if (!validateInput(firstName, lastName, phoneNumber))
@@ -503,11 +505,18 @@ function updateContact()
         xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("contactUpdateResult").innerHTML = "Contact has been updated";
+            let jsonObject = JSON.parse(xhr.responseText);
+            let targetID = jsonObject.ID;
+
+            document.getElementById(`FirstName-${targetID}`).innerHTML = jsonObject.updatedFirstName;
+            document.getElementById(`LastName-${targetID}`).innerHTML = jsonObject.updatedLastName;
+            document.getElementById(`Email-${targetID}`).innerHTML = jsonObject.updatedEmail;
+            document.getElementById(`Phone-${targetID}`).innerHTML = jsonObject.updatedPhone;
         }
         };
         xhr.send(jsonPayload);
         // Close updateUI
-        document.getElementById("updateUI").style.display = "none";
+        document.getElementById("editContact").style.display = "none";
     }
     catch (err) {
         document.getElementById("contactUpdateResult").innerHTML = err.message;
@@ -547,8 +556,6 @@ function deleteContact(contactId)
       }
       };
       xhr.send(jsonPayload);
-      // Close updateUI
-      document.getElementById("updateUI").style.display = "none";
       // Optimistically remove item from contact list
       let contactItem = document.getElementById(contactId);
       contactItem.remove();
@@ -613,6 +620,15 @@ function closeUpdateUserForm()
 {
   document.getElementById("profile-form").style.display = "none";
   document.getElementById("editUserButton").style.display = "block";
+  document.getElementById("editUserNameButton").style.display = "block";
+  document.getElementById("profile-details").style.display = "block";
+}
+
+function closeUpdateUsernameForm()
+{
+  document.getElementById("username-form").style.display = "none";
+  document.getElementById("editUserButton").style.display = "block";
+  document.getElementById("editUserNameButton").style.display = "block";
   document.getElementById("profile-details").style.display = "block";
 }
 
@@ -756,7 +772,8 @@ function validateInput(firstName, lastName, phoneNumber)
   let phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/;
   if (!phoneNumber.match(phoneRegex))
   {
-    document.getElementById("contactUpdateResult").innerHTML = "Please enter a valid phone number.";
+    document.getElementById("contactUpdateResult").innerHTML = "Please enter a valid phone number using the format ###-###-####.";
+    document.getElementById("contactAddResult").innerHTML = "Please enter a valid phone number using the format ###-###-####.";
     return false;
   }
 
@@ -764,13 +781,15 @@ function validateInput(firstName, lastName, phoneNumber)
   let nameRegex = /^[A-Za-z]+$/;
   if (!firstName.match(nameRegex))
   {
-    document.getElementById("contactUpdateResult").innerHTML = "Name must include only alpha characters.";
+    document.getElementById("contactUpdateResult").innerHTML = "Name must include only letters.";
+    document.getElementById("contactAddResult").innerHTML = "Name must include only letters.";
     return false;
   }
 
   if (!lastName.match(nameRegex))
   {
-    document.getElementById("contactUpdateResult").innerHTML = "Name must include only alpha characters.";
+    document.getElementById("contactUpdateResult").innerHTML = "Name must include only letters.";
+    document.getElementById("contactAddResult").innerHTML = "Name must include only letters.";
     return false;
   }
 
